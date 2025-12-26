@@ -1,14 +1,5 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+pub mod ast;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use lalrpop_util::lalrpop_mod;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+lalrpop_mod!(pub grammar);

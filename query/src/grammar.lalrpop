@@ -1,0 +1,7 @@
+use crate::ast::Value;
+
+grammar;
+
+pub String: Value = {
+    "'" <s:r"[^']*"> "'" => Value::String(s.to_string()),
+};
