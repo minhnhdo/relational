@@ -1,13 +1,25 @@
 use std::fmt::{Debug, Formatter};
 
 pub enum Value {
+    Literal(Literal),
+}
+
+pub enum Literal {
     String(String),
+}
+
+impl Debug for Literal {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Literal::String(s) => write!(f, "'{}'", s),
+        }
+    }
 }
 
 impl Debug for Value {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Value::String(s) => write!(f, "'{}'", s),
+            Value::Literal(l) => write!(f, "{:?}", l),
         }
     }
 }

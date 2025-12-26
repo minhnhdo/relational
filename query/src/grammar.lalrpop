@@ -1,7 +1,7 @@
-use crate::ast::Value;
+use crate::ast::Literal;
 
 grammar;
 
-pub String: Value = {
-    "'" <s:r"[^']*"> "'" => Value::String(s.to_string()),
+pub String: Literal = {
+    "'" <s:r"[^']*"> "'" => Literal::String(s.to_string()),
 };
