@@ -1,4 +1,7 @@
+use crate::ast::Expression;
 use crate::ast::Literal;
+use crate::ast::ResultColumn;
+use crate::ast::SelectStatement;
 use crate::ast::string::parse_sql_string;
 use lalrpop_util::ParseError;
 
@@ -9,8 +12,31 @@ SingleString: String = {
         .map_err(|e| ParseError::User {
             error: e.message(),
         }),
-};
+}
 
 pub String: Literal = {
     <s:SingleString+> => Literal::String(s.into_iter().collect()),
+}
+
+Literal: Literal = {
+    <s:String> => s,
+}
+
+Expression: Expression = {
+    <l:Literal> => Expression::Literal(l),
+}
+
+SingleResultColumn: ResultColumn = {
+    <e:Expression> => ResultColumn::Expression(e),
+}
+
+ResultColumns: Vec<ResultColumn> = {
+    <mut init:(<SingleResultColumn> ",")*> <last:SingleResultColumn> => {
+        init.push(last);
+        init
+    }
+}
+
+pub SelectStatement: SelectStatement = {
+    r"(?i)select" <result_columns:ResultColumns> => SelectStatement { result_columns },
 }
