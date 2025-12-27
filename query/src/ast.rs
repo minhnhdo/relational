@@ -13,7 +13,7 @@ pub enum Literal {
 impl Debug for Literal {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Literal::String(s) => write!(f, "'{}'", s),
+            Literal::String(s) => write!(f, "Literal::String({})", s),
         }
     }
 }
