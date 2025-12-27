@@ -2,7 +2,7 @@ use std::fmt::{Debug, Formatter};
 
 pub(crate) mod string;
 
-pub enum Value {
+pub enum Expression {
     Literal(Literal),
 }
 
@@ -18,10 +18,10 @@ impl Debug for Literal {
     }
 }
 
-impl Debug for Value {
+impl Debug for Expression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Value::Literal(l) => write!(f, "{:?}", l),
+            Expression::Literal(l) => write!(f, "{:?}", l),
         }
     }
 }
