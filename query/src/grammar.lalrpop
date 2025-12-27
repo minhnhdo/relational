@@ -1,7 +1,13 @@
 use crate::ast::Literal;
+use crate::ast::string::parse_sql_string;
+use lalrpop_util::ParseError;
 
 grammar;
 
 pub String: Literal = {
-    "'" <s:r"[^']*"> "'" => Literal::String(s.to_string()),
+    "'" <s:r"(''|[^'])*"> "'" =>? parse_sql_string(s)
+        .map(Literal::String)
+        .map_err(|e| ParseError::User {
+            error: e.message(),
+        }),
 };

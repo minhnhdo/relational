@@ -1,5 +1,7 @@
 use std::fmt::{Debug, Formatter};
 
+pub(crate) mod string;
+
 pub enum Value {
     Literal(Literal),
 }
