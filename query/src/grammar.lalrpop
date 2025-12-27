@@ -5,7 +5,7 @@ use lalrpop_util::ParseError;
 grammar;
 
 SingleString: String = {
-    "'" <s:r"(''|[^'])*"> "'" =>? parse_sql_string(s)
+    <s:r"'(''|[^'])*'"> =>? parse_sql_string(s)
         .map_err(|e| ParseError::User {
             error: e.message(),
         }),
