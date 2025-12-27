@@ -4,10 +4,13 @@ use lalrpop_util::ParseError;
 
 grammar;
 
-pub String: Literal = {
+SingleString: String = {
     "'" <s:r"(''|[^'])*"> "'" =>? parse_sql_string(s)
-        .map(Literal::String)
         .map_err(|e| ParseError::User {
             error: e.message(),
         }),
 };
+
+pub String: Literal = {
+    <s:SingleString+> => Literal::String(s.into_iter().collect()),
+}

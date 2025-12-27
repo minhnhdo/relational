@@ -13,3 +13,14 @@ fn escaped_single_quote_string() {
         .unwrap();
     assert_eq!(format!("{:?}", value), "Literal::String(Dianne's horse)");
 }
+
+#[test]
+fn concatenated_string() {
+    let value = query::grammar::StringParser::new()
+        .parse("'Dianne''s horse' ' is a good horse'")
+        .unwrap();
+    assert_eq!(
+        format!("{:?}", value),
+        "Literal::String(Dianne's horse is a good horse)"
+    );
+}
