@@ -83,3 +83,36 @@ fn select_union_select() {
         }
     )
 }
+
+#[test]
+fn nested_select_union() {
+    let value = query::grammar::SelectStatementParser::new()
+        .parse("SELECT 'foo' UNION SELECT 'bar' UNION SELECT 'baz'")
+        .unwrap();
+    assert_eq!(
+        value,
+        SelectStatement {
+            core: SelectStatementCore::Compounded(Box::new(CompoundedSelectCores {
+                lhs: SelectStatementCore::Compounded(Box::new(CompoundedSelectCores {
+                    lhs: SelectStatementCore::Simple(Box::new(SelectCore {
+                        result_columns: vec![ResultColumn::Expression(Expression::Literal(
+                            Literal::String("foo".to_string())
+                        ))]
+                    })),
+                    operator: CompoundOperator::Union,
+                    rhs: SelectCore {
+                        result_columns: vec![ResultColumn::Expression(Expression::Literal(
+                            Literal::String("bar".to_string())
+                        ))]
+                    },
+                })),
+                operator: CompoundOperator::Union,
+                rhs: SelectCore {
+                    result_columns: vec![ResultColumn::Expression(Expression::Literal(
+                        Literal::String("baz".to_string())
+                    ))]
+                }
+            }))
+        }
+    )
+}
