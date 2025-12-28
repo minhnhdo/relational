@@ -47,7 +47,7 @@ pub fn parse_sql_string(s: &str) -> Result<String, StringParseError> {
     }
 
     if last_char != '\'' {
-        return Err(StringParseError::ExpectedBeginningSingleQuote);
+        return Err(StringParseError::ExpectedEndingSingleQuote);
     }
     Ok(result)
 }
