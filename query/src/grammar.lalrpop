@@ -1,7 +1,11 @@
+use crate::ast::CompoundOperator;
+use crate::ast::CompoundedSelectCores;
 use crate::ast::Expression;
 use crate::ast::Literal;
 use crate::ast::ResultColumn;
+use crate::ast::SelectCore;
 use crate::ast::SelectStatement;
+use crate::ast::SelectStatementCore;
 use crate::ast::string::parse_sql_string;
 use lalrpop_util::ParseError;
 
@@ -37,6 +41,31 @@ ResultColumns: Vec<ResultColumn> = {
     }
 }
 
+SelectCore: SelectCore = {
+    r"(?i)select" <result_columns:ResultColumns> => SelectCore { result_columns },
+}
+
+CompoundOperator: CompoundOperator = {
+    r"(?i)union" => CompoundOperator::Union,
+    r"(?i)union" r"(?i)all" => CompoundOperator::UnionAll,
+    r"(?i)intersect" => CompoundOperator::Intersect,
+    r"(?i)except" => CompoundOperator::Except,
+}
+
+CompoundedSelectCores: CompoundedSelectCores = {
+    <lhs:SelectCore> <operator:CompoundOperator> <rhs:SelectCore> => CompoundedSelectCores {
+        lhs: SelectStatementCore::Simple(Box::new(lhs)),
+        operator,
+        rhs,
+    },
+    <lhs:CompoundedSelectCores> <operator:CompoundOperator> <rhs:SelectCore> => CompoundedSelectCores {
+        lhs: SelectStatementCore::Compounded(Box::new(lhs)),
+        operator,
+        rhs,
+    },
+}
+
 pub SelectStatement: SelectStatement = {
-    r"(?i)select" <result_columns:ResultColumns> => SelectStatement { result_columns },
+    <c:SelectCore> => SelectStatement { core: SelectStatementCore::Simple(Box::new(c)) },
+    <c:CompoundedSelectCores> => SelectStatement { core: SelectStatementCore::Compounded(Box::new(c)) },
 }
